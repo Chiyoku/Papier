@@ -11,6 +11,7 @@ Papier is an scalable website infrastructure to make it easier ot make scalable 
 
 |      Codebase        |      Description      |
 | :------------------- | :-------------------: |
+| [ruka](ruka)         |      Api Gateway      |
 | [ninsho](ninsho)     |       Auth API        |
 | [alterego](alterego) |      Upload API       |
 | [einstein](einstein) |   Analytics Service   |
@@ -21,6 +22,7 @@ Papier is an scalable website infrastructure to make it easier ot make scalable 
 
 ## How all microservices connect?
 
+:construction: Need to update
 <p align="center"><img src="./architecture.png"/></p>
 
 ## :palm_tree: Branches
