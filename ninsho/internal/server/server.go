@@ -3,16 +3,17 @@ package server
 import (
 	"context"
 	"fmt"
-	"log"
 	"net"
 	"ninsho/internal/gen/auth"
 
-	"github.com/go-pg/pg"
 	"google.golang.org/grpc"
+	"gorm.io/gorm"
 )
 
 type Server struct {
-	db *pg.DB
+	db       *gorm.DB
+	server   *grpc.Server
+	listener *net.Listener
 }
 
 func (s Server) Login(ctx context.Context, body *auth.LoginRequest) (*auth.Response, error) {
@@ -23,18 +24,30 @@ func (s Server) Register(ctx context.Context, body *auth.RegisterRequest) (*auth
 	return nil, nil
 }
 
-func (s Server) Validate(ctx context.Context, body *auth.ValidationRequest) (*auth.Response, error) {
+func (s Server) Validate(ctx context.Context, body *auth.ValidationRequest) (*auth.ValidationResponse, error) {
 	return nil, nil
 }
 
-func NewServer(address string, port int, db *pg.DB) *grpc.Server {
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
+func (conn *Server) Close() {
+	conn.server.Stop()
+}
+
+func (conn *Server) Serve() {
+	conn.server.Serve(*conn.listener)
+}
+
+func NewServer(address string, port string, db *gorm.DB) *Server {
+	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%s", address, port))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		panic(err)
 	}
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
-	auth.RegisterAuthRoutesServer(grpcServer, Server{db: db})
-	grpcServer.Serve(lis)
-	return grpcServer
+	conn := Server{
+		db:       db,
+		server:   grpcServer,
+		listener: &lis,
+	}
+	auth.RegisterAuthRoutesServer(grpcServer, conn)
+	return &conn
 }

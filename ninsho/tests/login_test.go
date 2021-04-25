@@ -2,11 +2,12 @@ package tests
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"ninsho/internal/gen/auth"
 	"ninsho/internal/server"
+	"os"
 	"testing"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -14,22 +15,25 @@ import (
 var conn auth.AuthRoutesClient
 
 func init() {
-	address := flag.String("addr", "", "address of the server")
-	port := flag.Int("port", 8080, "port of the server")
+	address := os.Getenv("ADDR")
+	port := os.Getenv("PORT")
 
 	server_conn := server.NewServer(address, port, testDB)
 	defer server_conn.Close()
 	go server_conn.Serve()
 
-	full_address := fmt.Sprintf("%s:%d", address, port)
+	full_address := fmt.Sprintf("%s:%s", address, port)
 	opts := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
 	}
-	if normal_conn, err := grpc.Dial(full_address, opts...); err == nil {
+	ctx, close := context.WithTimeout(context.Background(), time.Second)
+	defer close()
+
+	if normal_conn, err := grpc.DialContext(ctx, full_address, opts...); err == nil {
 		conn = auth.NewAuthRoutesClient(normal_conn)
 	} else {
-		panic(fmt.Sprintf("Error while trying to connect to %s", full_address))
+		panic(fmt.Sprintf("Error while trying to connect to address '%s'", full_address))
 	}
 }
 

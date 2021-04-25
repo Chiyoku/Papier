@@ -1,42 +1,19 @@
 package tests
 
 import (
-	"flag"
-	"ninsho/internal/db"
 	"ninsho/internal/users"
 
-	"github.com/go-pg/pg"
-	"github.com/go-pg/pg/v10"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
-var testDB *pg.DB
-
-func createSchema(db *pg.DB, model interface{}) {
-	err := db.Model(model).CreateTable(&pg.CreateTableOptions{
-		Temp: true,
-	})
-	if err != nil {
-		panic(err)
-	}
-}
+var testDB *gorm.DB
 
 func init() {
-	testDB = db.Start(&pg.Options{
-		Addr:     flag.String("db_addr", "", "address of the db"),
-		User:     flag.String("db_user", "postgres", "user"),
-		Password: flag.String("db_pass", "postgres", "passowrd of the db"),
-		Database: flag.String("db_name", "ninsho_test", "name of the db"),
-	})
-
-	createSchema(testDB, (*users.User)(nil))
-
-	_, err := db.Model(&users.User{
-		Email:    "eta@hotmail.com",
-		Password: "lerolero123",
-	}).Insert()
-
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
-
+	testDB = db
+	db.AutoMigrate(&users.User{})
 }
