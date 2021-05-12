@@ -9,7 +9,7 @@ import (
 func testValidRegister(t *testing.T, user *auth.RegisterRequest) {
 	_, err := conn.Register(context.Background(), user)
 	if err != nil {
-		t.Errorf("Expected a sucessful Register while trying to Register with email '%s'", user.Email)
+		t.Errorf("Expected a sucessful Register while trying to Register with email '%s': %s", user.Email, err)
 	}
 }
 
@@ -21,7 +21,14 @@ func testInvalidRegister(t *testing.T, user *auth.RegisterRequest) *auth.Respons
 	return response
 }
 
-func ToTestRegister(t *testing.T) {
+func toTestRegister(t *testing.T) {
+
+	testInvalidRegister(t, &auth.RegisterRequest{
+		Username: "chiyoku1",
+		Email:    "eta@hotmail.com",
+		Password: "lerolero123",
+	})
+
 	testValidRegister(t, &auth.RegisterRequest{
 		Username: "chiyoku",
 		Email:    "notexists@hotmail.com",

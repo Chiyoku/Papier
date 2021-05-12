@@ -6,27 +6,21 @@ import (
 	"testing"
 )
 
-func testValidLogin(t *testing.T, user *auth.LoginRequest) *auth.Response {
-	jwt, err := conn.Login(context.Background(), user)
+func testValidLogin(t *testing.T, user *auth.LoginRequest) {
+	_, err := conn.Login(context.Background(), user)
 	if err != nil {
 		t.Errorf("Expected a sucessful login while trying to login with email '%s'", user.Email)
 	}
-	return jwt
 }
 
-func testInvalidLogin(t *testing.T, user *auth.LoginRequest) *auth.Response {
-	response, err := conn.Login(context.Background(), user)
+func testInvalidLogin(t *testing.T, user *auth.LoginRequest) {
+	_, err := conn.Login(context.Background(), user)
 	if err == nil {
 		t.Errorf("Expected an error while trying to login with '%s'", user.Email)
 	}
-	return response
 }
 
-func ToTestLogin(t *testing.T) {
-	testValidLogin(t, &auth.LoginRequest{
-		Email:    "eta@hotmail.com",
-		Password: "lerolero123",
-	})
+func toTestLogin(t *testing.T) {
 
 	testInvalidLogin(t, &auth.LoginRequest{
 		Email:    "notexists@hotmail.com",

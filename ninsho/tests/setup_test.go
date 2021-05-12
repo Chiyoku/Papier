@@ -37,7 +37,7 @@ func init() {
 	}
 }
 
-func Test(t *testing.T) {
-	t.Run("Testing registers", ToTestRegister)
-	t.Run("Testing login", ToTestLogin)
+func TestValidation(t *testing.T) {
+	t.Run("Testing registers", toTestRegister)
+	t.Run("Testing login", toTestLogin)
 }
