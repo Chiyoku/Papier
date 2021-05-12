@@ -2,8 +2,9 @@ package server
 
 import (
 	"net"
-	"ninsho/internal/adapter/user"
+	adapter "ninsho/internal/adapter/user"
 	"ninsho/internal/gen/auth"
+	"ninsho/internal/user"
 
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
@@ -16,7 +17,7 @@ import (
  * the services in services.go
  */
 type Server struct {
-	userAdapter user.UserAdapter
+	userService user.UserServiceImpl
 	server      *grpc.Server
 	listener    *net.Listener
 	listening   bool
@@ -40,13 +41,15 @@ func NewServer(config *ServerConfig, db *gorm.DB) *Server {
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
 
+	params := user.NewHashParams()
+
+	service := user.NewUserService(params, adapter.NewGormAdapter(db))
+
 	conn := Server{
-		userAdapter: &user.GormUserAdapter{
-			DB: db,
-		},
-		server:    grpcServer,
-		listener:  &listener,
-		listening: false,
+		userService: service,
+		server:      grpcServer,
+		listener:    &listener,
+		listening:   false,
 	}
 
 	auth.RegisterAuthRoutesServer(grpcServer, conn)
