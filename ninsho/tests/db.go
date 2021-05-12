@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"ninsho/internal/users"
+	"ninsho/internal/user"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -15,5 +15,5 @@ func init() {
 		panic(err)
 	}
 	testDB = db
-	db.AutoMigrate(&users.User{})
+	db.AutoMigrate(&user.User{})
 }

@@ -1,19 +1,25 @@
 package server
 
 import (
-	"fmt"
 	"net"
+	"ninsho/internal/adapter/user"
 	"ninsho/internal/gen/auth"
 
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
 )
 
+/* TODO: Probably Server is not a good name
+ * because it unfortunately has a instance of the database
+ * inside each of adapters
+ * in order to avoid the usage of a global variable inside
+ * the services in services.go
+ */
 type Server struct {
-	db        *gorm.DB
-	server    *grpc.Server
-	listener  *net.Listener
-	listening bool
+	userAdapter user.UserAdapter
+	server      *grpc.Server
+	listener    *net.Listener
+	listening   bool
 }
 
 func (conn *Server) Close() {
@@ -25,7 +31,7 @@ func (conn *Server) Serve() {
 }
 
 func NewServer(config *ServerConfig, db *gorm.DB) *Server {
-	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%s", config.Address, config.Port))
+	listener, err := net.Listen("tcp", config.ToString())
 
 	if err != nil {
 		panic(err)
@@ -35,12 +41,15 @@ func NewServer(config *ServerConfig, db *gorm.DB) *Server {
 	grpcServer := grpc.NewServer(opts...)
 
 	conn := Server{
-		db:        db,
+		userAdapter: &user.GormUserAdapter{
+			DB: db,
+		},
 		server:    grpcServer,
-		listener:  &lis,
+		listener:  &listener,
 		listening: false,
 	}
 
 	auth.RegisterAuthRoutesServer(grpcServer, conn)
+
 	return &conn
 }

@@ -1,7 +1,7 @@
-package users
+package user
 
 type User struct {
-	Id           int64
+	ID           int
 	Username     string
 	Email        string
 	PasswordHash string
