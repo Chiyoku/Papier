@@ -15,40 +15,8 @@ func testValidRegister(t *testing.T, user *auth.RegisterRequest) {
 
 func testInvalidRegister(t *testing.T, user *auth.RegisterRequest) *auth.Response {
 	response, err := conn.Register(context.Background(), user)
-	if err != nil {
+	if err == nil {
 		t.Errorf("Expected an error while trying to Register with '%s'", user.Email)
 	}
 	return response
-}
-
-func TestRegister(t *testing.T) {
-	testValidRegister(t, &auth.RegisterRequest{
-		Username: "chiyoku",
-		Email:    "notexists@hotmail.com",
-		Password: "lerolero123",
-	})
-
-	testInvalidRegister(t, &auth.RegisterRequest{
-		Username: "chiyoku1",
-		Email:    "eta@hotmail.com",
-		Password: "lerolero123",
-	})
-
-	testInvalidRegister(t, &auth.RegisterRequest{
-		Username: "chiyoku2",
-		Email:    "minimumsize@hotmail.com",
-		Password: "lerole",
-	})
-
-	testInvalidRegister(t, &auth.RegisterRequest{
-		Username: "chiyoku3",
-		Email:    "invalidemail.com",
-		Password: "lerolero123",
-	})
-
-	testInvalidRegister(t, &auth.RegisterRequest{
-		Username: "chiyoku4",
-		Email:    "invalidemail.com",
-		Password: "lerolero123",
-	})
 }

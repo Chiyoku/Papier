@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"ninsho/internal/gen/auth"
 	"ninsho/internal/server"
-	"os"
 	"testing"
 	"time"
 
@@ -15,18 +14,19 @@ import (
 var conn auth.AuthRoutesClient
 
 func init() {
-	address := os.Getenv("ADDR")
-	port := os.Getenv("PORT")
 
-	server_conn := server.NewServer(address, port, testDB)
-	defer server_conn.Close()
+	config := server.CreateDefaultConfig()
+
+	server_conn := server.NewServer(config, testDB)
 	go server_conn.Serve()
 
-	full_address := fmt.Sprintf("%s:%s", address, port)
+	full_address := config.ToString()
+
 	opts := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
 	}
+
 	ctx, close := context.WithTimeout(context.Background(), time.Second)
 	defer close()
 
@@ -41,6 +41,7 @@ func testValidLogin(t *testing.T, user *auth.LoginRequest) *auth.Response {
 	jwt, err := conn.Login(context.Background(), user)
 	if err != nil {
 		t.Errorf("Expected a sucessful login while trying to login with email '%s'", user.Email)
+		panic(err)
 	}
 	return jwt
 }
@@ -49,11 +50,50 @@ func testInvalidLogin(t *testing.T, user *auth.LoginRequest) *auth.Response {
 	response, err := conn.Login(context.Background(), user)
 	if err != nil {
 		t.Errorf("Expected an error while trying to login with '%s'", user.Email)
+		panic(err)
 	}
 	return response
 }
 
-func TestLogin(t *testing.T) {
+func Test(t *testing.T) {
+	t.Run("Testing registers", ToTestRegister)
+	t.Run("Testing login", ToTestLogin)
+}
+
+func ToTestRegister(t *testing.T) {
+	testValidRegister(t, &auth.RegisterRequest{
+		Username: "chiyoku",
+		Email:    "notexists@hotmail.com",
+		Password: "lerolero123",
+	})
+
+	testInvalidRegister(t, &auth.RegisterRequest{
+		Username: "chiyoku1",
+		Email:    "eta@hotmail.com",
+		Password: "lerolero123",
+	})
+
+	testInvalidRegister(t, &auth.RegisterRequest{
+		Username: "chiyoku2",
+		Email:    "minimumsize@hotmail.com",
+		Password: "lerole",
+	})
+
+	testInvalidRegister(t, &auth.RegisterRequest{
+		Username: "chiyoku3",
+		Email:    "invalidemail.com",
+		Password: "lerolero123",
+	})
+
+	testInvalidRegister(t, &auth.RegisterRequest{
+		Username: "chiyoku4",
+		Email:    "invalidemail.com",
+		Password: "lerolero123",
+	})
+
+}
+
+func ToTestLogin(t *testing.T) {
 	testValidLogin(t, &auth.LoginRequest{
 		Email:    "eta@hotmail.com",
 		Password: "lerolero123",
