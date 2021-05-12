@@ -15,6 +15,7 @@ type hashParams struct {
 	parallelism uint8
 	saltLength  uint32
 	keyLength   uint32
+	iterations  uint32
 }
 
 func NewHashParams() *hashParams {
@@ -23,6 +24,7 @@ func NewHashParams() *hashParams {
 		parallelism: 2,
 		saltLength:  16,
 		keyLength:   32,
+		iterations:  3,
 	}
 }
 
@@ -34,13 +36,19 @@ func GenerateSalt(config *hashParams) ([]byte, error) {
 	return salt, nil
 }
 
-func Hash(config *hashParams, password string) ([]byte, error) {
+func Hash(config *hashParams, password string) (string, error) {
 	salt, err := GenerateSalt(config)
 	if err != nil {
-		return nil, nil
+		return "", nil
 	}
-	key := argon2.IDKey([]byte(password), salt, 1, config.memory, config.parallelism, config.keyLength)
-	return key, nil
+	hash := argon2.IDKey([]byte(password), salt, config.iterations, config.memory, config.parallelism, config.keyLength)
+
+	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
+	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
+
+	encodedHash := fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s", argon2.Version, config.memory, config.iterations, config.parallelism, b64Salt, b64Hash)
+
+	return encodedHash, nil
 }
 
 func Verify(config *hashParams, hash string, plain string) (bool, error) {

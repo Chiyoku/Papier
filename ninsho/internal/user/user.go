@@ -38,6 +38,11 @@ func (service *UserService) Register(user *models.User) (*models.User, error) {
 	return user, nil
 }
 
+func (service *UserService) Hash(password string) (string, error) {
+	res, err := Hash(service.params, password)
+	return string(res), err
+}
+
 func ValidateJWT(jwt string) bool {
 	return false
 }
