@@ -29,6 +29,6 @@ func (adapter *GormUserAdapter) GetUser(id int) (*models.User, error) {
 
 func (adapter *GormUserAdapter) GetUserByUsername(nickname string) (*models.User, error) {
 	user := &models.User{}
-	result := adapter.DB.First(user).Where("nickname = ?", nickname)
+	result := adapter.DB.First(user).Where("email = ?", nickname)
 	return user, result.Error
 }
