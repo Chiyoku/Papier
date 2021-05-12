@@ -1,8 +1,8 @@
 package user
 
-import "ninsho/internal/user"
+import "ninsho/internal/models"
 
 type UserAdapter interface {
-	CreateUser(user *user.User) (int, error)
-	GetUser(id int) (*user.User, error)
+	CreateUser(user *models.User) (int, error)
+	GetUser(id int) (*models.User, error)
 }
