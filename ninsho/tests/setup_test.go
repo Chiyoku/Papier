@@ -38,6 +38,6 @@ func init() {
 }
 
 func TestValidation(t *testing.T) {
-	t.Run("Testing registers", toTestRegister)
-	t.Run("Testing login", toTestLogin)
+	toTestRegister(t)
+	toTestLogin(t)
 }
