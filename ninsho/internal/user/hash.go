@@ -54,7 +54,7 @@ func Hash(config *hashParams, password string) (string, error) {
 func Verify(config *hashParams, hash string, plain string) (bool, error) {
 	hashParts := strings.Split(hash, "$")
 
-	_, err := fmt.Sscanf(hashParts[3], "m=%d,t=%d,p=%d", &config.memory, 1, &config.parallelism)
+	_, err := fmt.Sscanf(hashParts[3], "m=%d,t=%d,p=%d", &config.memory, &config.iterations, &config.parallelism)
 
 	if err != nil {
 		return false, err
@@ -70,7 +70,7 @@ func Verify(config *hashParams, hash string, plain string) (bool, error) {
 		return false, err
 	}
 
-	hashToCompare := argon2.IDKey([]byte(hash), salt, 1, config.memory, config.parallelism, uint32(len(decodedHash)))
+	hashToCompare := argon2.IDKey([]byte(plain), salt, config.iterations, config.memory, config.parallelism, uint32(len(decodedHash)))
 
 	return subtle.ConstantTimeCompare(decodedHash, hashToCompare) == 1, nil
 }

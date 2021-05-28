@@ -15,11 +15,13 @@ func NewUserService(params *hashParams, adapter user.UserAdapter) *UserService {
 	return &UserService{params, adapter}
 }
 
-func (service *UserService) Login(username string, password string) (*models.User, error) {
-	user, err := service.adapter.GetUserByUsername(username)
+func (service *UserService) Login(email string, password string) (*models.User, error) {
+	user, err := service.adapter.GetUserByEmail(email)
+
 	if err != nil {
 		return nil, err
 	}
+
 	res, err := Verify(service.params, user.PasswordHash, password)
 	if err != nil {
 		return nil, err
