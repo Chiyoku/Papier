@@ -5,34 +5,34 @@
 <br>
 
 # :paperclip: What is this?
+
 Papier is an scalable website infrastructure to make it easier ot make scalable video sharing services.
 
 # :construction: Structure
 
-|      Codebase        |      Description      |
-| :------------------- | :-------------------: |
-| [ruka](ruka)         |      Api Gateway      |
-| [ninsho](ninsho)     |       Auth API        |
-| [alterego](alterego) |      Upload API       |
-| [einstein](einstein) |   Analytics Service   |
-| [talker](talker)     |    Websocket Server   |
-| [fujisaki](fujisaki) |   Next.js Frontend    |
-| [pieck](pieck)       |      Catalog API      |
-| [shopping](shopping) |   Comments/Likes API  |
+| Codebase             |    Description     |
+| :------------------- | :----------------: |
+| [ninsho](ninsho)     |      Auth API      |
+| [alterego](alterego) |     Upload API     |
+| [einstein](einstein) | Analytics Service  |
+| [talker](talker)     |  Websocket Server  |
+| [fujisaki](fujisaki) |   React Frontend   |
+| [pieck](pieck)       |    Catalog API     |
+| [shopping](shopping) | Comments/Likes API |
 
 ## How all microservices connect?
 
 :construction: Need to update
+
 <p align="center"><img src="./architecture.png"/></p>
 
 ## :palm_tree: Branches
 
-| Branch | Description | 
-| :------------------- | :-------------------: |
-| main | last stable version               |
-| dev  | pull request this branch          |
-| prod | running on production so dont use |
-
+| Branch |            Description            |
+| :----- | :-------------------------------: |
+| main   |        last stable version        |
+| dev    |     pull request this branch      |
+| prod   | running on production so dont use |
 
 ## :house: How to run locally?
 
