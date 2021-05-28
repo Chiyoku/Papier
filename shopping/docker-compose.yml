@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+    shopping_db:
+        image: postgres:9.4
+        restart: always
+        volumes:
+            - .pgdata:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_PASSWORD=root
+            - POSTGRES_DB=shopping
+        ports:
+            - "5432:5432"
