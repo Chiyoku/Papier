@@ -6,13 +6,16 @@ import (
 )
 
 type ServerConfig struct {
-	Address string
-	Port    string
+	Address   string
+	Port      string
+	SecretKey string
 }
 
 func CreateDefaultConfig() *ServerConfig {
 	address := os.Getenv("ADDR")
 	port := os.Getenv("PORT")
+	secretKey := os.Getenv("SECRET_KEY")
+
 	if port == "" {
 		port = "4040"
 	}
@@ -20,11 +23,12 @@ func CreateDefaultConfig() *ServerConfig {
 		address = "localhost"
 	}
 	return &ServerConfig{
-		Address: address,
-		Port:    port,
+		Address:   address,
+		Port:      port,
+		SecretKey: secretKey,
 	}
 }
 
-func (config *ServerConfig) ToString() string {
+func (config *ServerConfig) AddrToString() string {
 	return fmt.Sprintf("%s:%s", config.Address, config.Port)
 }

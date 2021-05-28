@@ -17,7 +17,7 @@ func (s Server) Login(ctx context.Context, body *auth.LoginRequest) (*auth.Respo
 		return nil, err
 	}
 
-	jwt, err := jwt.GenerateJWT([]byte("teste"), user)
+	jwt, err := jwt.GenerateJWT(([]byte)(s.secretKey), user)
 
 	if err != nil {
 		return nil, err

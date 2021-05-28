@@ -21,6 +21,7 @@ type Server struct {
 	server      *grpc.Server
 	listener    *net.Listener
 	listening   bool
+	secretKey   string
 }
 
 func (conn *Server) Close() {
@@ -32,7 +33,7 @@ func (conn *Server) Serve() {
 }
 
 func NewServer(config *ServerConfig, db *gorm.DB) *Server {
-	listener, err := net.Listen("tcp", config.ToString())
+	listener, err := net.Listen("tcp", config.AddrToString())
 
 	if err != nil {
 		panic(err)
@@ -50,6 +51,7 @@ func NewServer(config *ServerConfig, db *gorm.DB) *Server {
 		server:      grpcServer,
 		listener:    &listener,
 		listening:   false,
+		secretKey:   config.SecretKey,
 	}
 
 	auth.RegisterAuthRoutesServer(grpcServer, conn)

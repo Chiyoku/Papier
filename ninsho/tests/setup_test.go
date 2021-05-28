@@ -16,11 +16,12 @@ var conn auth.AuthRoutesClient
 func init() {
 
 	config := server.CreateDefaultConfig()
+	config.SecretKey = "keyDeTeste"
 
 	server_conn := server.NewServer(config, testDB)
 	go server_conn.Serve()
 
-	full_address := config.ToString()
+	full_address := config.AddrToString()
 
 	opts := []grpc.DialOption{
 		grpc.WithBlock(),
@@ -40,4 +41,5 @@ func init() {
 func TestValidation(t *testing.T) {
 	toTestRegister(t)
 	toTestLogin(t)
+	toTestJwt(t)
 }
