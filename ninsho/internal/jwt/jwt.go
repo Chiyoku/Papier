@@ -25,7 +25,6 @@ func GenerateJWT(key []byte, user *models.User) (string, error) {
 	}
 
 	jwtInst := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	fmt.Printf("kek bro: %s \n", key)
 	return jwtInst.SignedString(key)
 }
 
