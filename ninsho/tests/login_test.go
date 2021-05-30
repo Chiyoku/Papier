@@ -9,7 +9,7 @@ import (
 func testValidLogin(t *testing.T, user *auth.LoginRequest) {
 	_, err := conn.Login(context.Background(), user)
 	if err != nil {
-		t.Errorf("Expected a sucessful login while trying to login with email '%s'", user.Email)
+		t.Errorf("Expected a sucessful login while trying to login with email '%s' but got '%s'", user.Email, err)
 	}
 }
 
@@ -21,6 +21,11 @@ func testInvalidLogin(t *testing.T, user *auth.LoginRequest) {
 }
 
 func toTestLogin(t *testing.T) {
+
+	testValidLogin(t, &auth.LoginRequest{
+		Email:    "notexistsal@hotmail.com",
+		Password: "lerolero123",
+	})
 
 	testInvalidLogin(t, &auth.LoginRequest{
 		Email:    "notexists@hotmail.com",
